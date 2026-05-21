@@ -1,16 +1,19 @@
+import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from skimage.metrics import structural_similarity as calculate_ssim
 
-print("=== PROGRAM KOMPRESI CITRA PCA & EDA ===")
-
-# TAHAP 1 & 3: Membaca Citra & Mengubah Menjadi Matriks
-print("\n[Tahap 1] Silakan unggah file gambar Anda:")
-nama_file = input("Masukkan path gambar: ")
-
+st.title("PROGRAM KOMPRESI CITRA PCA & EDA")
 # Membaca gambar dalam mode grayscale (1 kanal warna)
-gambar = Image.open(nama_file).convert("L")
+uploaded_file = st.file_uploader("Upload gambar", type=["jpg", "png", "jpeg"])
+
+if uploaded_file is not None:
+    gambar = Image.open(uploaded_file).convert("L")
+    matriks_gambar = np.array(gambar, dtype=float)
+
+    st.image(gambar, caption="Citra Asli")
+    # TAHAP 1 & 3: Membaca Citra & Mengubah Menjadi Matriks
 matriks_gambar = np.array(gambar, dtype=float)
 tinggi, lebar = matriks_gambar.shape
 
