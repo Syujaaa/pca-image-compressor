@@ -6,7 +6,6 @@ from skimage.metrics import structural_similarity as calculate_ssim
 
 st.set_page_config(layout="wide", initial_sidebar_state="expanded")
 
-# Custom CSS untuk styling
 st.markdown("""
     <style>
         * {
@@ -282,7 +281,7 @@ st.markdown(
 
 st.markdown(
     "<p style='font-size: 1.05rem; color: #555; line-height: 1.6; margin-bottom: 2rem;'>"
-    "Aplikasi ini mengimplementasikan kompresi citra berbasis <b>Principal Component Analysis (PCA)</b> "
+    "Mengimplementasikan kompresi citra berbasis <b>Principal Component Analysis (PCA)</b> "
     "menggunakan Eigenvalue dan Eigenvector, dilengkapi dengan <b>Exploratory Data Analysis (EDA)</b> "
     "sebelum, saat, dan setelah kompresi."
     "</p>", 
@@ -599,6 +598,17 @@ if uploaded_file is not None:
     rasio_kompresi   = ukuran_asli / ukuran_kompresi
     persentase_hemat = (1 - (ukuran_kompresi / ukuran_asli)) * 100
 
+    # Fungsi untuk format ukuran file
+    def format_size(bytes_size):
+        for unit in ['B', 'KB', 'MB', 'GB']:
+            if bytes_size < 1024.0:
+                return f"{bytes_size:.2f} {unit}"
+            bytes_size /= 1024.0
+        return f"{bytes_size:.2f} TB"
+
+    size_asli_fmt = format_size(ukuran_asli)
+    size_kompresi_fmt = format_size(ukuran_kompresi)
+
     col_m1, col_m2, col_m3, col_m4 = st.columns(4)
     with col_m1:
         st.markdown(f"""
@@ -633,6 +643,32 @@ if uploaded_file is not None:
             </div>
         """, unsafe_allow_html=True)
 
+    # Tampilkan ukuran file
+    col_size1, col_size2, col_size3 = st.columns(3)
+    with col_size1:
+        st.markdown(f"""
+            <div class='metric-card'>
+                <div class='metric-label'>Ukuran Asli</div>
+                <div class='metric-value' style='font-size: 1.8rem;'>{size_asli_fmt}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with col_size2:
+        st.markdown(f"""
+            <div class='metric-card'>
+                <div class='metric-label'>Ukuran Terkompresi</div>
+                <div class='metric-value' style='font-size: 1.8rem;'>{size_kompresi_fmt}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with col_size3:
+        st.markdown(f"""
+            <div class='metric-card'>
+                <div class='metric-label'>Penghematan</div>
+                <div class='metric-value'>{persentase_hemat:.1f}%</div>
+            </div>
+        """, unsafe_allow_html=True)
+
     # Interpretasi PSNR sesuai tabel di PDF
     if psnr < 20:
         kualitas_psnr = "Buruk (< 20 dB)"
@@ -655,9 +691,9 @@ if uploaded_file is not None:
 
     st.markdown(
         f"<div class='info-box'>"
-        f"<b>💾 Efisiensi Memori:</b> Ukuran terkompresi <b>{rasio_kompresi:.2f}x</b> lebih kecil (Hemat <b>{persentase_hemat:.2f}%</b>)<br><br>"
-        f"<b>📊 Kualitas PSNR:</b> {kualitas_psnr}<br><br>"
-        f"<b>👁️ Kualitas SSIM:</b> {kualitas_ssim}"
+        f"<b>💾 Efisiensi Memori:</b> Ukuran terkompresi <b>{rasio_kompresi:.2f}x</b> lebih kecil (dari {size_asli_fmt} menjadi {size_kompresi_fmt})<br><br>"
+        f"<b>� Kualitas PSNR:</b> {kualitas_psnr}<br><br>"
+        f"<b>�️ Kualitas SSIM:</b> {kualitas_ssim}"
         f"</div>",
         unsafe_allow_html=True
     )
